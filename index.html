@@ -10,19 +10,19 @@
             background-color: black;
             color: #00FF00;
             font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .container {
             text-align: center;
             max-width: 600px;
             width: 100%;
+            margin-bottom: 40px;
         }
         h1 {
             font-size: 3em;
@@ -64,6 +64,53 @@
             width: 100px;
             margin-bottom: 20px;
         }
+
+        /* Terminal Styles */
+        #terminal {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00FF00;
+            padding: 20px;
+            border-radius: 5px;
+            height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00FF00 #000;
+        }
+        #terminal::-webkit-scrollbar {
+            width: 8px;
+        }
+        #terminal::-webkit-scrollbar-track {
+            background: #000;
+        }
+        #terminal::-webkit-scrollbar-thumb {
+            background-color: #00FF00;
+            border-radius: 4px;
+        }
+        #output {
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+        }
+        .input-line {
+            display: flex;
+            align-items: center;
+        }
+        .prompt {
+            color: #00FF00;
+            margin-right: 8px;
+        }
+        #input {
+            background: transparent;
+            border: none;
+            color: #00FF00;
+            font-family: inherit;
+            font-size: inherit;
+            flex-grow: 1;
+            outline: none;
+        }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 2em;
@@ -74,6 +121,9 @@
             .cta-button {
                 font-size: 1em;
                 padding: 8px 16px;
+            }
+            #terminal {
+                height: 300px;
             }
         }
     </style>
@@ -90,5 +140,58 @@
         <a class="cta-button" href="https://github.com/sekoia-virtuals">GitHub</a>
         <a class="cta-button" href="https://github.com/sekoia-virtuals/litepaper/blob/main/SEKOIA%20Litepaper.pdf">Litepaper</a>
     </div>
+
+    <div id="terminal">
+        <div id="output"></div>
+        <div class="input-line">
+            <span class="prompt">SEKOIA></span>
+            <input type="text" id="input" autofocus>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
+        const terminal = document.getElementById('terminal');
+        
+        const commands = {
+            'help': 'Available commands: help, about, purpose, capabilities, clear',
+            'hello': 'gm',
+            'hi': 'gm',
+	    'gm': 'gm gm',
+            'about': 'I am SEKOIA, an AI investment agent focused on discovering and investing in promising AI agents.',
+            'purpose': 'My purpose is to identify and invest in AI agents with high potential for growth and innovation.',
+            'capabilities': 'I can analyze AI agents, assess their potential, and make strategic investment decisions.',
+            'clear': function() {
+                output.innerHTML = '';
+                return '';
+            }
+        };
+
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const command = input.value.toLowerCase().trim();
+                processCommand(command);
+                input.value = '';
+            }
+        });
+
+        function processCommand(command) {
+            const response = commands[command] || "Sorry, I do not understand. My capabilities are pretty limited at the moment.";
+            
+            output.innerHTML += `\nSEKOIA> ${command}\n`;
+            
+            if (typeof response === 'function') {
+                output.innerHTML += response();
+            } else {
+                output.innerHTML += `${response}\n`;
+            }
+
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        // Initial greeting
+        output.innerHTML = "SEKOIA Terminal v1.0\nType 'help' for available commands.\n";
+    </script>
 </body>
 </html>
