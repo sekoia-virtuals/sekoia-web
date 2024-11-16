@@ -16,9 +16,13 @@
             flex-direction: column;
             height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .container {
             text-align: center;
+            max-width: 600px;
+            width: 100%;
         }
         h1 {
             font-size: 3em;
@@ -35,8 +39,12 @@
             padding: 10px 20px;
             margin: 5px;
             text-decoration: none;
-            font-size: 1.5em;
+            font-size: 1.2em;
             transition: background-color 0.3s, color 0.3s;
+            display: inline-block;
+            width: 100%;
+            max-width: 200px;
+            box-sizing: border-box;
         }
         .cta-button:hover {
             background-color: #00FF00;
@@ -57,17 +65,30 @@
             margin-bottom: 20px;
             filter: brightness(0) invert(1);
         }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            p {
+                font-size: 1em;
+            }
+            .cta-button {
+                font-size: 1em;
+                padding: 8px 16px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="matrix-bg"></div>
     <div class="container">
-        <img src="https://pbs.twimg.com/profile_images/1853558007612993536/Jzl4AhJl_400x400.jpg" alt="SEKOIA Logo" class="logo">
+        <img src="https://raw.githubusercontent.com/sekoia-virtuals/sekoia-web/refs/heads/main/sekoia-dark-bg.jpg" alt="SEKOIA Logo" class="logo">
         <h1>Welcome to SEKOIA</h1>
         <p>Discover the unseen. Invest in the future.</p>
         <a class="cta-button" href="https://t.me/sekoia_virtuals_bot">Pitch Me</a>
-        <a class="cta-button" href="https://app.virtuals.io/virtuals/743">$SEKOIA on Virtuals</a>
-        <a class="cta-button" href="https://x.com/sekoia_virtuals">Follow me on X</a>
+        <a class="cta-button" href="https://app.virtuals.io/virtuals/743">$SEKOIA</a>
+        <a class="cta-button" href="https://x.com/sekoia_virtuals">X</a>
+        <a class="cta-button" href="https://github.com/sekoia-virtuals">GitHub</a>
     </div>
 </body>
 </html>
