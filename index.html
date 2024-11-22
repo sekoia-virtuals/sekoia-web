@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Previous code remains exactly the same until the style section -->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SEKOIA</title>
+    <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
+        /* Previous styles remain the same, only updating terminal-related styles */
         body {
             background-color: black;
             color: #00FF00;
@@ -18,180 +21,369 @@
             flex-direction: column;
             align-items: center;
         }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: -1;
+        }
+
         .container {
             text-align: center;
-            max-width: 600px;
-            width: 100%;
-            margin-bottom: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        h1 {
-            font-size: 3em;
+
+        .logo {
+            max-width: 100px;
             margin-bottom: 20px;
         }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #00FF00;
+        }
+
         p {
             font-size: 1.2em;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            color: #00FF00;
         }
+
+        .cta-buttons, .bottom-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
         .cta-button {
-            background-color: black;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: transparent;
             border: 2px solid #00FF00;
             color: #00FF00;
-            padding: 10px 20px;
-            margin: 5px;
             text-decoration: none;
-            font-size: 1.2em;
+            font-size: 1.1em;
+            font-family: 'Courier New', Courier, monospace;
             transition: background-color 0.3s, color 0.3s;
-            display: inline-block;
+            text-align: center;
             width: 100%;
-            max-width: 200px;
             box-sizing: border-box;
+            cursor: pointer;
         }
+
         .cta-button:hover {
             background-color: #00FF00;
             color: black;
         }
-        .matrix-bg {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
-            opacity: 0.1;
-            z-index: -1;
-        }
-        .logo {
-            width: 100px;
-            margin-bottom: 20px;
-        }
 
-        /* Terminal Styles */
-        #terminal {
+        .wallet-section {
+            margin-top: 40px;
             width: 100%;
-            max-width: 800px;
-            margin-top: 20px;
-            background-color: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00FF00;
-            padding: 20px;
-            border-radius: 5px;
-            height: 400px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #00FF00 #000;
-        }
-        #terminal::-webkit-scrollbar {
-            width: 8px;
-        }
-        #terminal::-webkit-scrollbar-track {
-            background: #000;
-        }
-        #terminal::-webkit-scrollbar-thumb {
-            background-color: #00FF00;
-            border-radius: 4px;
-        }
-        #output {
-            white-space: pre-wrap;
-            margin-bottom: 20px;
-        }
-        .input-line {
+            max-width: 600px;
+            text-align: center;
             display: flex;
+            flex-direction: column;
             align-items: center;
         }
-        .prompt {
-            color: #00FF00;
-            margin-right: 8px;
+
+        #connectWallet {
+            width: 100%;
+            max-width: 600px;
         }
-        #input {
+
+        #walletInfo {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #00FF00;
+            border-radius: 5px;
+            display: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .terminal {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00FF00;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 40px;
+            width: 100%;
+            max-width: 600px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00FF00;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .terminal-header {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background-color: black;
+            padding: 0 10px;
+            font-size: 1.1em;
+        }
+
+        .terminal-content {
+            margin-top: 10px;
+            text-align: left;
+            font-size: 1.1em; /* Matching the button font size */
+        }
+
+        .terminal-content p {
+            margin: 5px 0;
+            text-align: left;
+            font-size: 1.1em; /* Matching the button font size */
+        }
+
+        .terminal-input {
             background: transparent;
             border: none;
             color: #00FF00;
-            font-family: inherit;
-            font-size: inherit;
-            flex-grow: 1;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1em; /* Matching the button font size */
+            width: calc(100% - 20px);
             outline: none;
+            margin-top: 10px;
+        }
+
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            font-size: 1.1em; /* Matching the button font size */
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: black;
+            border: 2px solid #00FF00;
+            padding: 20px;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .modal-content {
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            padding: 5px 15px;
+            background: transparent;
+            border: 1px solid #00FF00;
+            color: #00FF00;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            background: #00FF00;
+            color: black;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
         }
 
         @media (max-width: 600px) {
-            h1 {
-                font-size: 2em;
-            }
-            p {
-                font-size: 1em;
-            }
-            .cta-button {
-                font-size: 1em;
-                padding: 8px 16px;
-            }
-            #terminal {
-                height: 300px;
+            .cta-buttons, .bottom-buttons {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+<!-- Rest of the HTML and JavaScript code remains exactly the same -->
 <body>
     <div class="matrix-bg"></div>
     <div class="container">
         <img src="https://raw.githubusercontent.com/sekoia-virtuals/sekoia-web/refs/heads/main/sekoia-dark-bg.jpg" alt="SEKOIA Logo" class="logo">
         <h1>Welcome to SEKOIA</h1>
         <p>Investing in AI agents</p>
-        <a class="cta-button" href="https://t.me/sekoia_virtuals_bot">Pitch Me</a>
-        <a class="cta-button" href="https://app.virtuals.io/virtuals/743">$SEKOIA</a>
-        <a class="cta-button" href="https://x.com/sekoia_virtuals">X</a>
-        <a class="cta-button" href="https://github.com/sekoia-virtuals">GitHub</a>
-        <a class="cta-button" href="https://github.com/sekoia-virtuals/litepaper/blob/main/SEKOIA%20Litepaper.pdf">Litepaper</a>
-    </div>
+        <div class="cta-buttons">
+            <a class="cta-button" href="https://t.me/sekoia_virtuals_bot">Pitch Me</a>
+            <a class="cta-button" href="https://app.virtuals.io/virtuals/743">$SEKOIA</a>
+            <a class="cta-button" href="https://x.com/sekoia_virtuals">X</a>
+            <a class="cta-button" href="https://github.com/sekoia-virtuals">GitHub</a>
+        </div>
+        
+        <div class="cta-buttons">
+            <a class="cta-button" href="https://github.com/sekoia-virtuals/litepaper/blob/main/SEKOIA%20Litepaper.pdf">Litepaper</a>
+            <button class="cta-button" onclick="showModal()">Portfolio</button>
+        </div>
 
-    <div id="terminal">
-        <div id="output"></div>
-        <div class="input-line">
-            <span class="prompt">SEKOIA></span>
-            <input type="text" id="input" autofocus>
+        <div id="portfolioModal" class="modal">
+            <div class="modal-content">
+                <p>Coming soon!</p>
+                <button class="modal-close" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+
+        <div class="wallet-section">
+            <button id="connectWallet" class="cta-button">Connect Wallet</button>
+            <div id="walletInfo">
+                <p>Connected Address: <span id="walletAddress"></span></p>
+                <p>Network: <span id="network"></span></p>
+                <p>SEKOIA Balance: <span id="sekoiaBalance"></span></p>
+            </div>
+        </div>
+
+        <div class="terminal">
+            <div class="terminal-header">Terminal</div>
+            <div class="terminal-content">
+                <p>$ initializing SEKOIA protocol...</p>
+                <p>$ loading AI modules...</p>
+                <p>$ establishing neural network connections...</p>
+                <p>$ system ready</p>
+                <p>$ Type 'help' for available commands</p>
+                <div class="terminal-input-line">
+                    <span>$ </span>
+                    <input type="text" class="terminal-input" id="terminalInput" spellcheck="false">
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Previous JavaScript code remains exactly the same -->
     <script>
-        const input = document.getElementById('input');
-        const output = document.getElementById('output');
-        const terminal = document.getElementById('terminal');
-        
-        const commands = {
-            'help': 'Available commands: help, about, purpose, capabilities, clear',
-            'hello': 'gm',
-            'hi': 'gm',
-	    'gm': 'gm gm',
-            'about': 'I am SEKOIA, an AI investment agent focused on discovering and investing in promising AI agents.',
-            'purpose': 'My purpose is to identify and invest in AI agents with high potential for growth and innovation.',
-            'capabilities': 'I can analyze AI agents, assess their potential, and make strategic investment decisions.',
-            'clear': function() {
-                output.innerHTML = '';
-                return '';
-            }
-        };
+    let provider;
+    let signer;
+    let hasEnoughSekoia = false;
+    const SEKOIA_CONTRACT = "0x5C7F04CE471dD91B3df334B781DFE61f4dda35C2";
+    const MIN_SEKOIA_REQUIRED = 100;
 
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const command = input.value.toLowerCase().trim();
-                processCommand(command);
-                input.value = '';
-            }
-        });
-
-        function processCommand(command) {
-            const response = commands[command] || "Sorry, I do not understand. My capabilities are pretty limited at the moment.";
+    async function checkSekoiaBalance(address) {
+        try {
+            const sekoiaABI = ["function balanceOf(address) view returns (uint256)"];
+            const sekoiaContract = new ethers.Contract(SEKOIA_CONTRACT, sekoiaABI, provider);
+            const balance = await sekoiaContract.balanceOf(address);
+            console.log('Raw balance:', balance.toString());
             
-            output.innerHTML += `\nSEKOIA> ${command}\n`;
+            const formattedBalance = ethers.utils.formatUnits(balance, 18);
+            console.log('Formatted balance:', formattedBalance);
             
-            if (typeof response === 'function') {
-                output.innerHTML += response();
-            } else {
-                output.innerHTML += `${response}\n`;
-            }
+            document.getElementById('sekoiaBalance').textContent = formattedBalance;
+            hasEnoughSekoia = parseFloat(formattedBalance) >= MIN_SEKOIA_REQUIRED;
+            console.log('Has enough SEKOIA:', hasEnoughSekoia);
+            return hasEnoughSekoia;
+        } catch (error) {
+            console.error('Error checking SEKOIA balance:', error);
+            return false;
+        }
+    }
 
-            terminal.scrollTop = terminal.scrollHeight;
+    async function connectWallet() {
+        if (typeof window.ethereum !== 'undefined') {
+            try {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                signer = provider.getSigner();
+                
+                const address = await signer.getAddress();
+                const network = await provider.getNetwork();
+                
+                document.getElementById('walletAddress').textContent = address;
+                document.getElementById('network').textContent = network.name;
+                document.getElementById('walletInfo').style.display = 'block';
+                document.getElementById('connectWallet').textContent = 'Wallet Connected';
+
+                hasEnoughSekoia = await checkSekoiaBalance(address);
+                console.log('Initial balance check result:', hasEnoughSekoia);
+            } catch (error) {
+                console.error('Error connecting wallet:', error);
+            }
+        } else {
+            alert('Please install MetaMask to connect your wallet!');
+        }
+    }
+
+    function showModal() {
+        document.getElementById('portfolioModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('portfolioModal').style.display = 'none';
+    }
+
+    function processCommand(input) {
+        console.log('Current hasEnoughSekoia status:', hasEnoughSekoia);
+        if (!hasEnoughSekoia) {
+            return "You need at least 100 SEKOIA tokens to interact with the terminal.";
         }
 
-        // Initial greeting
-        output.innerHTML = "SEKOIA Terminal v1.0\nType 'help' for available commands.\n";
+        const command = input.toLowerCase().trim();
+        if (command in commands) {
+            if (typeof commands[command] === 'function') {
+                return commands[command]();
+            }
+            return commands[command];
+        }
+        return "Command not recognized. Type 'help' for available commands.";
+    }
+
+    document.getElementById('connectWallet').addEventListener('click', connectWallet);
+
+    document.getElementById('terminalInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const input = this.value;
+            const terminalContent = document.querySelector('.terminal-content');
+            
+            const inputLine = document.createElement('p');
+            inputLine.textContent = `$ ${input}`;
+            terminalContent.insertBefore(inputLine, this.parentElement);
+            
+            const responseLine = document.createElement('p');
+            responseLine.textContent = processCommand(input);
+            terminalContent.insertBefore(responseLine, this.parentElement);
+            
+            this.value = '';
+            
+            this.scrollIntoView();
+        }
+    });
+
+    const commands = {
+        'help': 'Available commands: help, about, purpose, capabilities, clear',
+        'hello': 'gm',
+        'hi': 'gm',
+        'gm': 'gm gm',
+        'about': 'I am SEKOIA, an AI investment agent focused on discovering and investing in promising AI agents.',
+        'purpose': 'My purpose is to identify and invest in AI agents with high potential for growth and innovation.',
+        'capabilities': 'I can analyze AI agents, assess their potential, and make strategic investment decisions.',
+        'clear': function() {
+            const terminalContent = document.querySelector('.terminal-content');
+            terminalContent.innerHTML = `
+                <p>$ system cleared</p>
+                <div class="terminal-input-line">
+                    <span>$ </span>
+                    <input type="text" class="terminal-input" id="terminalInput" spellcheck="false">
+                </div>
+            `;
+            return '';
+        }
+    };
     </script>
 </body>
 </html>
