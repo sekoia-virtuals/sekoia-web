@@ -276,7 +276,6 @@
 
     async function checkSekoiaBalance(address) {
         try {
-            console.log({ address })
             const sekoiaABI = ["function balanceOf(address) view returns (uint256)"];
             const sekoiaContract = new ethers.Contract(SEKOIA_CONTRACT, sekoiaABI, provider);
             const balance = await sekoiaContract.balanceOf(address);
