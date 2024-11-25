@@ -271,7 +271,7 @@
     let provider;
     let signer;
     let hasEnoughSekoia = false;
-    const SEKOIA_CONTRACT = "0x5C7F04CE471dD91B3df334B781DFE61f4dda35C2";
+    const SEKOIA_CONTRACT = "0x1185cB5122Edad199BdBC0cbd7a0457E448f23c7";
     const MIN_SEKOIA_REQUIRED = 100;
 
     async function checkSekoiaBalance(address) {
@@ -308,6 +308,15 @@
                 document.getElementById('network').textContent = network.name;
                 document.getElementById('walletInfo').style.display = 'block';
                 document.getElementById('connectWallet').textContent = 'Wallet Connected';
+
+                // Ask the user to switch to the base network if not connected already
+                if (network.chainId !== 8453) {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x2105' }], // chainId must be in hexadecimal numbers
+                    });
+                    await connectWallet();
+                }
 
                 hasEnoughSekoia = await checkSekoiaBalance(address);
                 console.log('Initial balance check result:', hasEnoughSekoia);
